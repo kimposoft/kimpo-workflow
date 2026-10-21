@@ -1,0 +1,173 @@
+{
+  "plugin_id": "com.kimposoft.workflow",
+  "name": {
+    "zh_CN": "流程引擎",
+    "en_US": "Workflow Engine",
+    "ja_JP": "ワークフローエンジン",
+    "zh_TW": "流程引擎"
+  },
+  "version": "1.0.1",
+  "sdk_version": "1.1.0-tp.20",
+  "kimpo_version": ">=1.0.0",
+  "i18n": {
+    "namespace": "com.kimposoft.workflow",
+    "locales": [
+      "zh-CN",
+      "en-US",
+      "ja-JP",
+      "zh-TW"
+    ],
+    "path": "frontend/locales",
+    "default_locale": "zh-CN"
+  },
+  "category": "workflow",
+  "author": {
+    "name": "KimpoSoft Team"
+  },
+  "description": {
+    "zh_CN": "串联发起、办理与结束，支持任务分派、条件选路、退回和撤销，让流程有序运行。",
+    "en_US": "Runs business workflows from start to finish, with task assignment, conditional routing, return and withdrawal.",
+    "ja_JP": "開始から処理・終了までの業務フローを実行し、タスク割り当て、条件分岐、差し戻し、取り消しに対応します。",
+    "zh_TW": "串聯發起、辦理與結束，支援任務分派、條件選路、退回和撤銷，讓流程有序運行。"
+  },
+  "entry": {
+    "backend": "plugin.bin",
+    "frontend": "frontend/plugin.umd.js"
+  },
+  "process": {
+    "memory_limit_mb": 0
+  },
+  "trust_level": "trusted",
+  "frontend_global_name": "Kimpo.KimpoWorkflowPlugin",
+  "dependencies": {
+    "platform": ">=1.0.0",
+    "plugins": []
+  },
+  "config_schema": "schema/config.schema.json",
+  "permissions": {
+    "network": [],
+    "storage": false,
+    "exec": false
+  },
+  "api_scope": {
+    "allowed_rpcs": [
+      "kimpo.workflow.host.v1.LedgerService/GetDefinition",
+      "kimpo.workflow.host.v1.LedgerService/ListDefinitions",
+      "kimpo.workflow.host.v1.LedgerService/GetVersion",
+      "kimpo.workflow.host.v1.LedgerService/LoadInstance",
+      "kimpo.workflow.host.v1.LedgerService/Commit",
+      "kimpo.workflow.host.v1.LedgerService/FindCommit",
+      "kimpo.workflow.host.v1.RecordService/WriteFields",
+      "kimpo.workflow.host.v1.RecordService/GetRecordHeader",
+      "kimpo.workflow.host.v1.RecordService/ReadFields",
+      "kimpo.workflow.host.v1.LaunchService/CreateRecord",
+      "kimpo.workflow.host.v1.LeaseService/ReleaseEditLease",
+      "kimpo.workflow.host.v1.ExpressionService/Freeze",
+      "kimpo.workflow.host.v1.ExpressionService/EvaluateCondition",
+      "kimpo.workflow.host.v1.ExpressionService/EvaluateComputed",
+      "kimpo.workflow.host.v1.CandidateService/Resolve",
+      "kimpo.plugins.host.v1.LogService/Write",
+      "kimpo.plugins.host.v1.LogService/WriteBatch",
+      "kimpo.plugins.host.v1.TemplateCatalogService/ListFields"
+    ]
+  },
+  "data_access": {
+    "allowed_models": [
+      "user"
+    ],
+    "tenant_scoped": true,
+    "fields": {
+      "user": [
+        "*"
+      ]
+    }
+  },
+  "lifecycle": {
+    "allow_multiple_config_instances": false,
+    "max_config_instances": 1
+  },
+  "runtime": {
+    "allow_multiple_runtime_instances": false,
+    "max_runtime_instances_per_config_instance": 0,
+    "max_runtime_instances_per_user": 0,
+    "idle_ttl_seconds": 0,
+    "force_close_timeout_seconds": 0
+  },
+  "capabilities": {
+    "directions": [
+      "workflow"
+    ],
+    "workflow_engine": {
+      "document_schemas": [
+        "workflow/1"
+      ],
+      "node_kinds": [
+        "START",
+        "HANDLE",
+        "APPROVE",
+        "CC",
+        "SUBFLOW",
+        "END"
+      ],
+      "features": [
+        "withdraw",
+        "back",
+        "resume_incident",
+        "subflow",
+        "auto_handle",
+        "ratio_pass"
+      ],
+      "display_name": {
+        "zh_CN": "流程",
+        "en_US": "Workflow",
+        "ja_JP": "ワークフロー",
+        "zh_TW": "流程"
+      }
+    },
+    "frontend": {
+      "global_name": "Kimpo.KimpoWorkflowPlugin",
+      "bundle": "frontend/plugin.umd.js",
+      "surfaces": [
+        {
+          "type": "workflow-designer",
+          "priority": 0,
+          "host_caps": [
+            "platform.interactiveSession",
+            "domain:workflow-designer",
+            "domain:alice-v4",
+            "domain:expression",
+            "ui.templatePicker",
+            "ui.orgTriPicker",
+            "ui.confirm",
+            "ui.prompt",
+            "i18n"
+          ]
+        }
+      ],
+      "routes": []
+    },
+    "backend_services": [
+      "kimpo-workflow"
+    ]
+  },
+  "schema_compatibility": {
+    "frontend.surface": {
+      "min_version": 1
+    },
+    "system.lifecycle": {
+      "min_version": 1
+    },
+    "system.log": {
+      "min_version": 1
+    },
+    "workflow.host": {
+      "min_version": 1
+    },
+    "frontend.interactive-session": {
+      "min_version": 1
+    },
+    "host.template-catalog": {
+      "min_version": 1
+    }
+  }
+}

@@ -1,0 +1,377 @@
+{
+  "code": "workflow",
+  "name": {
+    "zh-CN": "流程审批",
+    "zh-TW": "流程審批",
+    "en-US": "Workflow Approval",
+    "ja-JP": "ワークフロー承認"
+  },
+  "summary": {
+    "zh-CN": "为单据设计发起、办理、审批、抄送、子流程等审批流转，配置办理人、字段权限、回退与通知。",
+    "zh-TW": "為單據設計發起、辦理、審批、抄送、子流程等審批流轉，設定辦理人、欄位權限、退回與通知。",
+    "en-US": "Design start/handle/approve/CC/sub-flow routing with assignees, field permissions, returns and notifications.",
+    "ja-JP": "帳票の発起・処理・承認・回覧・サブフローなどのワークフローを設計し、担当者・フィールド権限・差し戻し・通知を設定する。"
+  },
+  "capabilities": [
+    {
+      "code": "workflow_binding",
+      "name": {
+        "zh-CN": "流程绑定与版本发布",
+        "zh-TW": "流程綁定與版本發布",
+        "en-US": "Workflow Binding & Publishing",
+        "ja-JP": "ワークフローの紐付けとバージョン発行"
+      },
+      "summary": {
+        "zh-CN": "把一个或多个流程定义绑到模板上，提交单据时走流程；每次发布生成新版本，不影响在跑的实例。",
+        "zh-TW": "把一個或多個流程定義綁到範本上，提交單據時走流程；每次發布產生新版本，不影響進行中的實例。",
+        "en-US": "Bind one or more workflows to a template; each publish creates a new version, running instances stay unaffected.",
+        "ja-JP": "テンプレートに1つ以上のワークフロー定義を紐付ける。発行のたびに新バージョンができ、実行中のインスタンスには影響しない。"
+      },
+      "intents": ["审批流程", "发起审批", "单据流转", "走流程", "流程版本", "流程发布", "绑定流程"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "流程绑定的模板不能更改，换模板需新建流程",
+        "有单据正在运行的版本不能删除，发布要求模板已发布",
+        "删除整条流程会清空全部版本、实例与流转记录，单据保留"
+      ]
+    },
+    {
+      "code": "start_node",
+      "name": {
+        "zh-CN": "发起环节",
+        "zh-TW": "發起環節",
+        "en-US": "Start Step",
+        "ja-JP": "発起ステップ"
+      },
+      "summary": {
+        "zh-CN": "配置谁能人工发起流程、发起条件，以及填单那一刻各字段可编辑/只读/隐藏。",
+        "zh-TW": "設定誰能人工發起流程、發起條件，以及填單那一刻各欄位可編輯/唯讀/隱藏。",
+        "en-US": "Configure who can manually start the workflow, the start condition, and field editability when filling the form.",
+        "ja-JP": "誰が手動でワークフローを起動できるか、起動条件、記入時の各フィールドの編集可否を設定する。"
+      },
+      "intents": ["谁能发起", "发起权限", "发起条件", "提交单据即走流程", "填单即审批", "谁能提单"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "发起条件只是闸门，不参与走哪条流程的选择，由用户自选",
+        "子流程方式发起不受发起条件、发起权限与字段权限约束",
+        "选主表字段作来源时，无单据的入口要到提交时才知能否发起"
+      ]
+    },
+    {
+      "code": "handle_node",
+      "name": {
+        "zh-CN": "办理环节",
+        "zh-TW": "辦理環節",
+        "en-US": "Handle Step",
+        "ja-JP": "処理ステップ"
+      },
+      "summary": {
+        "zh-CN": "由人补充或修改单据内容后提交或打回，可配置办理人、任一/全部/按比例过关、字段权限。",
+        "zh-TW": "由人補充或修改單據內容後提交或退回，可設定辦理人、任一/全部/按比例過關、欄位權限。",
+        "en-US": "A person fills or edits the form then submits or returns it; configure assignees, pass rule and field permissions.",
+        "ja-JP": "担当者が内容を補足・修正して提出または差し戻す。担当者、合格条件、フィールド権限を設定できる。"
+      },
+      "intents": ["办理人", "会签", "或签", "多人办理", "补充资料", "暂存", "打回", "按比例通过"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "提交时只校验本环节可编辑字段的必填，只读与隐藏字段不校验",
+        "多人全部完成方式下，任一人回退则整环节回退，其余任务作废",
+        "候选人超过500人视为候选计算失败，办理人别配得过宽"
+      ]
+    },
+    {
+      "code": "approve_node",
+      "name": {
+        "zh-CN": "审批环节",
+        "zh-TW": "審批環節",
+        "en-US": "Approve Step",
+        "ja-JP": "承認ステップ"
+      },
+      "summary": {
+        "zh-CN": "审批人看单据后点按钮表态，不改内容；可配审批人、或签/会签/按比例、按钮与结果理由绑定字段；按钮可选「不通过并结束流程」直达结束节点。",
+        "zh-TW": "審批人看單據後點按鈕表態，不改內容；可設定審批人、或簽/會簽/按比例、按鈕與結果理由綁定欄位；按鈕可選「不通過並結束流程」直達結束節點。",
+        "en-US": "Approvers click buttons without editing; set approvers, any/all/ratio, buttons; a button can reject and end the flow.",
+        "ja-JP": "承認者は内容を変更せずボタンで意思表示する。承認者、全員/一人/比率、ボタンと結果・理由の紐付けを設定でき、ボタンで不承認のままフロー終了ノードへ直行できる。"
+      },
+      "intents": ["审批人", "同意拒绝", "审批按钮", "签核", "会签", "或签", "按比例审批", "不通过结束", "驳回结束"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "审批不能改单据内容，只能表态；要改数据须用办理环节",
+        "不同意二选一：退回发起人=改了再来；不通过并结束=到此为止，单据不能再改",
+        "退回发起人后重新提交，流程从发起环节按引导线重新走"
+      ]
+    },
+    {
+      "code": "cc_node",
+      "name": {
+        "zh-CN": "抄送环节",
+        "zh-TW": "抄送環節",
+        "en-US": "CC Step",
+        "ja-JP": "回覧ステップ"
+      },
+      "summary": {
+        "zh-CN": "把单据知会给一批人，不需要处理，收件人打开即转已读；可配收件人、通知渠道、标题正文。",
+        "zh-TW": "把單據知會給一批人，不需要處理，收件人打開即轉已讀；可設定收件人、通知管道、標題正文。",
+        "en-US": "Notify a set of people for awareness without action required; configure recipients, channels, title and body.",
+        "ja-JP": "対応不要で関係者に帳票を知らせる。開くと既読になる。宛先・通知チャネル・件名本文を設定できる。"
+      },
+      "intents": ["抄送", "知会", "传阅", "已读回执"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "抄送只供查看，收件人界面没有任何办理或流转按钮",
+        "已发出的抄送不能撤回",
+        "抄送环节可穿插在主线中，也可放在末端"
+      ]
+    },
+    {
+      "code": "subflow_node",
+      "name": {
+        "zh-CN": "子流程环节",
+        "zh-TW": "子流程環節",
+        "en-US": "Sub-flow Step",
+        "ja-JP": "サブフローステップ"
+      },
+      "summary": {
+        "zh-CN": "用当前单据的数据发起另一条流程（可能是另一个模板），可等待其结束或即发即走。",
+        "zh-TW": "用目前單據的資料發起另一條流程（可能是另一個範本），可等待其結束或即發即走。",
+        "en-US": "Start another workflow (possibly on another template) using current record's data; wait for it or continue immediately.",
+        "ja-JP": "現在の帳票データで別のワークフロー（別テンプレートも可）を起動する。完了を待つか、即座に先へ進める。"
+      },
+      "intents": ["子流程", "联动审批", "跨模板流程", "一键生成关联单据", "先发起再继续"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "只支持同一应用内的子流程，不支持跨应用",
+        "传递字段来源与目标类型须相同或目标为文本，否则发布被拒",
+        "流程回退到子流程之前，已发起的子流程实例连同单据一并删除"
+      ]
+    },
+    {
+      "code": "end_node",
+      "name": {
+        "zh-CN": "结束环节",
+        "zh-TW": "結束環節",
+        "en-US": "End Step",
+        "ja-JP": "終了ステップ"
+      },
+      "summary": {
+        "zh-CN": "流程的出口，可配多个不同结束标识（如已通过/已拒绝），可写入主表某个字段。",
+        "zh-TW": "流程的出口，可設定多個不同結束標識（如已通過/已拒絕），可寫入主表某個欄位。",
+        "en-US": "Workflow exit; multiple end nodes with distinct labels (e.g. approved/rejected) can write into a main-table field.",
+        "ja-JP": "ワークフローの出口。承認済み/却下など異なる終了ラベルを複数設定でき、主表のフィールドに書き込める。"
+      },
+      "intents": ["流程结束", "结束标识", "审批结果标识", "已通过已拒绝"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "结束节点没有出线；须有入线或被审批按钮指向，否则发布被拦下",
+        "标识写入字段只能选主表文本字段",
+        "已结束的实例不能单独删除，只能随单据删除"
+      ]
+    },
+    {
+      "code": "assignee_source",
+      "name": {
+        "zh-CN": "办理人来源与过滤",
+        "zh-TW": "辦理人來源與過濾",
+        "en-US": "Assignee Source & Filter",
+        "ja-JP": "担当者ソースとフィルタ"
+      },
+      "summary": {
+        "zh-CN": "按用户、角色、部门、单据字段或发起人算出候选办理人，可再按与上一步处理人的关系筛一道。",
+        "zh-TW": "按使用者、角色、部門、單據欄位或發起人算出候選辦理人，可再按與上一步處理人的關係篩一道。",
+        "en-US": "Resolve assignees by user, role, department, a field or the starter; optionally filter by relation to last handler.",
+        "ja-JP": "ユーザー・ロール・部門・帳票フィールド・発起人から担当候補を算出し、前工程の処理者との関係でさらに絞り込める。"
+      },
+      "intents": ["谁来办理", "按部门找人", "按角色找人", "上级审批", "部门负责人审批", "逐级审批", "同部门审批"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "部门主管只是筛选条件，必须搭配角色等真实人员来源才能用",
+        "部门主管只认部门的负责人字段，不认成员上的负责人标记",
+        "候选超过500人视为计算失败；仅统计在职且成员关系有效的人"
+      ]
+    },
+    {
+      "code": "route_branch",
+      "name": {
+        "zh-CN": "条件分支与选路",
+        "zh-TW": "條件分支與選路",
+        "en-US": "Conditional Routing",
+        "ja-JP": "条件分岐とルーティング"
+      },
+      "summary": {
+        "zh-CN": "每条连线可配一条判断条件，按结果决定流转方向；多条同时成立时由提交人选一条。",
+        "zh-TW": "每條連線可設定一條判斷條件，按結果決定流轉方向；多條同時成立時由提交人選一條。",
+        "en-US": "Each transition line can carry a condition deciding the route; when several are true the submitter picks one.",
+        "ja-JP": "各遷移線に判定条件を設定でき、結果に応じて分岐する。複数条件が成立した場合は提出者が1つ選ぶ。"
+      },
+      "intents": ["条件分支", "按金额分流", "分段审批", "多条件选择路径", "满足条件走这条线"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "除结束外每个主线环节须有出线；每个结束环节须有入线或被审批按钮指向",
+        "连线条件求值出错时提交直接失败，需联系管理员",
+        "流程状态等三项只有主表有，连线条件与单据自身表达式引用不到"
+      ]
+    },
+    {
+      "code": "back_withdraw",
+      "name": {
+        "zh-CN": "回退与撤销",
+        "zh-TW": "退回與撤銷",
+        "en-US": "Return & Withdraw",
+        "ja-JP": "差し戻しと取り消し"
+      },
+      "summary": {
+        "zh-CN": "办理/审批节点可勾选允许退回上一步、发起人或指定步骤；提交人可在下一站无人处理前收回自己的提交。",
+        "zh-TW": "辦理/審批節點可勾選允許退回上一步、發起人或指定步驟；提交人可在下一站無人處理前收回自己的提交。",
+        "en-US": "Steps can allow return to the prior step, starter, or a chosen step; submitters may withdraw before next step starts.",
+        "ja-JP": "処理/承認ステップで前工程・発起人・指定ステップへの差し戻しを許可でき、提出者は次工程が未着手なら取り消せる。"
+      },
+      "intents": ["打回", "退回上一步", "退回发起人", "撤回提交", "撤销发起", "驳回重填"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "子流程环节不能作为退回目标；已发起子流程后不能撤销提交",
+        "下一站是结束环节时不能撤销",
+        "动作发起或子流程发起的单据没有发起表单，退回发起人按退回上一步"
+      ]
+    },
+    {
+      "code": "auto_handle",
+      "name": {
+        "zh-CN": "自动办理条件",
+        "zh-TW": "自動辦理條件",
+        "en-US": "Auto-Handle Condition",
+        "ja-JP": "自動処理条件"
+      },
+      "summary": {
+        "zh-CN": "办理/审批节点配一条判断条件，条件成立时系统自动代为通过，不派任务给人。",
+        "zh-TW": "辦理/審批節點設定一條判斷條件，條件成立時系統自動代為通過，不派任務給人。",
+        "en-US": "A handle/approve step can carry a condition; when true the system auto-approves it without assigning a task to anyone.",
+        "ja-JP": "処理/承認ステップに条件を設定し、成立時はシステムが自動的に承認し、誰にもタスクを割り当てない。"
+      },
+      "intents": ["自动通过", "条件免审", "自动办理", "满足条件自动跳过", "小额免审批"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "条件求值出错按条件为假处理，改走人工",
+        "自动办理时审批的结果与理由绑定字段不会被写入",
+        "自动办理只决定是否派任务，人员来源与过关方式仍各自生效"
+      ]
+    },
+    {
+      "code": "field_permission_by_step",
+      "name": {
+        "zh-CN": "按环节设置字段权限",
+        "zh-TW": "按環節設定欄位權限",
+        "en-US": "Per-Step Field Permission",
+        "ja-JP": "ステップ別フィールド権限"
+      },
+      "summary": {
+        "zh-CN": "同一字段可在流程不同环节分别设为编辑、只读或隐藏，独立于模板本身的字段权限。",
+        "zh-TW": "同一欄位可在流程不同環節分別設為編輯、唯讀或隱藏，獨立於範本本身的欄位權限。",
+        "en-US": "The same field can be editable, read-only or hidden differently at each workflow step, overriding the template default.",
+        "ja-JP": "同じフィールドをワークフローの各ステップごとに編集可・読み取り専用・非表示に個別設定でき、テンプレート既定より優先される。"
+      },
+      "intents": ["审批时字段只读", "办理时可编辑", "隐藏字段", "审批不可改内容", "分环节控制填写权限"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "流程字段权限只有编辑、只读、隐藏三档，不含禁止导出",
+        "审批、抄送这类只看型环节最多放开到只读，不能设为编辑",
+        "字段被删除后，流程里对它的权限设置须先清理才能发布"
+      ]
+    },
+    {
+      "code": "notification_events",
+      "name": {
+        "zh-CN": "流程事件通知",
+        "zh-TW": "流程事件通知",
+        "en-US": "Workflow Event Notifications",
+        "ja-JP": "ワークフローイベント通知"
+      },
+      "summary": {
+        "zh-CN": "收到任务、被退回、被撤销、被终止、流程结束五类事件可分别开关，并选系统通知/短信/邮箱渠道。",
+        "zh-TW": "收到任務、被退回、被撤銷、被終止、流程結束五類事件可分別開關，並選系統通知/簡訊/郵箱管道。",
+        "en-US": "Five events (assigned, returned, withdrawn, terminated, ended) can be toggled with a system/SMS/email channel choice.",
+        "ja-JP": "タスク受領・差し戻し・取り消し・強制終了・終了の5イベントを個別にオンオフでき、システム通知/SMS/メールを選べる。"
+      },
+      "intents": ["流程通知", "待办提醒", "被退回提醒", "流程结束提醒", "短信通知审批人"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "通知发送失败只记日志，不阻断流程流转",
+        "未配置短信、邮箱通道的实例选不了对应渠道，至少保留一种渠道",
+        "收件人固定推导，不能自定义；通知任意人请用抄送环节"
+      ]
+    },
+    {
+      "code": "process_status_fields",
+      "name": {
+        "zh-CN": "流程状态字段",
+        "zh-TW": "流程狀態欄位",
+        "en-US": "Workflow Status Fields",
+        "ja-JP": "ワークフロー状態フィールド"
+      },
+      "summary": {
+        "zh-CN": "绑定流程的模板自动具备流程状态、结束标识、当前站三个系统字段，可在列表、视图、取数里引用。",
+        "zh-TW": "綁定流程的範本自動具備流程狀態、結束標識、目前站點三個系統欄位，可在列表、視圖、取數裡引用。",
+        "en-US": "A workflow-bound template gets 3 system fields (status, end label, step) usable in lists, views and data actions.",
+        "ja-JP": "ワークフローに紐付いたテンプレートは自動的にステータス・終了ラベル・現在ステップの3つのシステムフィールドを持ち、一覧・ビュー・データ抽出で参照できる。"
+      },
+      "intents": ["流程状态筛选", "按审批结果统计", "当前审批到哪一步", "导出审批状态", "流程状态排序"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "三个内容只有主表有，是只读展示，不能编辑或写入",
+        "视图、取数、控件候选可引用；单据自身的表达式引用不到",
+        "单据没发起过流程时，状态显示未发起，标识与当前站为空"
+      ]
+    },
+    {
+      "code": "participant_access",
+      "name": {
+        "zh-CN": "流程参与人的单据访问权",
+        "zh-TW": "流程參與人的單據存取權",
+        "en-US": "Participant Record Access",
+        "ja-JP": "参加者の帳票アクセス権"
+      },
+      "summary": {
+        "zh-CN": "办理人、审批人、抄送收件人经流程入口打开单据不受模板权限与数据范围限制，按流程自身规则放行。",
+        "zh-TW": "辦理人、審批人、抄送收件人經流程入口開啟單據不受範本權限與資料範圍限制，按流程自身規則放行。",
+        "en-US": "Handlers, approvers and CC recipients can open the record via workflow without template permission or data-scope checks.",
+        "ja-JP": "処理者・承認者・回覧の宛先はワークフロー経由で帳票を開く際、テンプレート権限やデータ範囲の制約を受けない。"
+      },
+      "intents": ["审批人免权限查看单据", "抄送人可查看单据", "参与流程自动获得查看权", "办理不需要额外授权"],
+      "category": "design",
+      "contracts": [],
+      "capability_full_name": "",
+      "boundary_points": [
+        "只有经流程入口打开单据才享有放行，其他入口仍按模板权限判断",
+        "附件与图片随单据放行，但仍按该人的可见字段过滤",
+        "被撤销或改派且从未办理的任务，其人不算参与人"
+      ]
+    }
+  ]
+}

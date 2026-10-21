@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KimpoWorkflow Plugin Configuration",
+  "description": "Configuration schema for KimpoWorkflow plugin instance",
+  "type": "object",
+  "properties": {
+    "log_level": {
+      "type": "string",
+      "enum": ["trace", "debug", "info", "warn", "error"],
+      "default": "warn",
+      "description": "Minimum severity forwarded from the plugin sidecar to the host log center (SDK reserved field)."
+    },
+    "auto_hop_limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000,
+      "default": 20,
+      "description": "一次流转里连续自动办理的步骤上限，超过即停下标为事故，防止两个自动节点互相指向形成死循环。"
+    }
+  }
+}
